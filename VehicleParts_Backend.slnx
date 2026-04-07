@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
   <Project Path="VehicleParts.Application/VehicleParts.Application.csproj" />
   <Project Path="VehicleParts.Domain/VehicleParts.Domain.csproj" />
   <Project Path="VehicleParts.Infrastructure/VehicleParts.Infrastructure.csproj" />
