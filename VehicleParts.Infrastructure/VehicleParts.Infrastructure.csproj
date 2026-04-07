@@ -10,4 +10,10 @@
     <ProjectReference Include="..\VehicleParts.Application\VehicleParts.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Persistance\" />
+  </ItemGroup>
+
 </Project>
