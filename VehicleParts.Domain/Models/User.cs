@@ -13,4 +13,7 @@ public class User : IdentityUser<long>
     [Required]
     [MaxLength(50)]
     public string LastName { get; set; } = string.Empty;
+    
+    [MaxLength(20)]
+    public string? Phone { get; set; }
 }
