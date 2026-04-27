@@ -5,8 +5,11 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
+using VehicleParts.Application.Interfaces.IServices;
 using VehicleParts.Domain.Models;
 using VehicleParts.Infrastructure.Persistence;
+using VehicleParts.Infrastructure.Persistence.Seed;
+using VehicleParts.Infrastructure.Services;
 using VehicleParts.Presentation.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +33,10 @@ builder.Services.AddIdentity<User, Role>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+// ----------
+builder.Services.AddScoped<IAuthService, AuthService>();
+// ----------
 
 
 // JWT Authentication
@@ -64,7 +71,22 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+
+Console.WriteLine("--- App is starting up! ---");
 var app = builder.Build();
+Console.WriteLine("--- Services Built, checking Seeder... ---");
+
+
+// Seed admin
+using (var scope = app.Services.CreateScope())
+{
+    Console.WriteLine("--- Seeder Scope Active ---");
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+
+    await AdminSeeder.SeedAsync(userManager, roleManager);
+    Console.WriteLine("--- Seeding Finished Successfully! ---");
+}
 
 // Middleware Pipeline 
 if (app.Environment.IsDevelopment())

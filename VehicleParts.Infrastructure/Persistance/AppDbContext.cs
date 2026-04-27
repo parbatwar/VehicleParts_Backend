@@ -17,9 +17,9 @@ public class AppDbContext : IdentityDbContext<User, Role, long>
 
         // Seed roles
         builder.Entity<Role>().HasData(
-            new Role { Id = 1, Name = "Admin", ConcurrencyStamp = "4bca9d29-f413-471f-85bd-56af2106f6e8" },
-            new Role { Id = 2, Name = "Staff", ConcurrencyStamp = "4bca9d29-f413-471f-85bd-56af2106f6e9" },
-            new Role { Id = 3, Name = "Customer", ConcurrencyStamp = "4bca9d29-f413-471f-85bd-56af2106f6e0" }
+            new Role { Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "4bca9d29-f413-471f-85bd-56af2106f6e8" },
+            new Role { Id = 2, Name = "Staff", NormalizedName = "STAFF", ConcurrencyStamp = "4bca9d29-f413-471f-85bd-56af2106f6e9" },
+            new Role { Id = 3, Name = "Customer", NormalizedName = "CUSTOMER", ConcurrencyStamp = "4bca9d29-f413-471f-85bd-56af2106f6e0" }
         );
     }
 
