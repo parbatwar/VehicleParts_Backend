@@ -23,3 +23,7 @@ System.ArgumentException: Failed to create user: Passwords must have at least on
    at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
    at VehicleParts.Presentation.Middleware.ExceptionHandlerMiddleware.Invoke(HttpContext httpContext) in D:\VehicleParts\VehicleParts_Backend\VehicleParts.Presentation\Middleware\ExceptionHandlerMiddleware.cs:line 20
 2026-04-27 13:57:49.767 +05:45 [INF] Staff ram@vehicleparts.com created successfully.
+2026-04-27 14:40:19.607 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 14:41:07.089 +05:45 [INF] User ram@vehicleparts.com logged in successfully.
+2026-04-27 15:35:12.889 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 15:54:17.720 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
