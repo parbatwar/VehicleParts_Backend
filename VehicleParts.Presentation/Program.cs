@@ -5,10 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
+using VehicleParts.Application.Interfaces.IRepositories;
 using VehicleParts.Application.Interfaces.IServices;
 using VehicleParts.Domain.Models;
 using VehicleParts.Infrastructure.Persistence;
 using VehicleParts.Infrastructure.Persistence.Seed;
+using VehicleParts.Infrastructure.Repositories;
 using VehicleParts.Infrastructure.Services;
 using VehicleParts.Presentation.Middleware;
 
@@ -36,11 +38,11 @@ builder.Services.AddIdentity<User, Role>(options =>
 
 // ----------
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 // ----------
 
-
 // JWT Authentication
-
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
 var jwtAudience = builder.Configuration["Jwt:Audience"]!;
@@ -67,15 +69,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Controllers + Swagger 
+// Controllers + Swagger
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
 
 Console.WriteLine("--- App is starting up! ---");
 var app = builder.Build();
 Console.WriteLine("--- Services Built, checking Seeder... ---");
-
 
 // Seed admin
 using (var scope = app.Services.CreateScope())
@@ -88,7 +88,7 @@ using (var scope = app.Services.CreateScope())
     Console.WriteLine("--- Seeding Finished Successfully! ---");
 }
 
-// Middleware Pipeline 
+// Middleware Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
