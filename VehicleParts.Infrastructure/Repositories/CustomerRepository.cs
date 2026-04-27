@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using VehicleParts.Application.Interfaces.IRepositories;
+using VehicleParts.Domain.Models;
+using VehicleParts.Infrastructure.Persistence;
+
+namespace VehicleParts.Infrastructure.Repositories
+{
+    public class CustomerRepository : ICustomerRepository
+    {
+        private readonly AppDbContext _context;
+
+        public CustomerRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<Customer> CreateAsync(Customer customer)
+        {
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+            return customer;
+        }
+
+        public async Task<Customer?> GetByUserIdAsync(long userId)
+        {
+            return await _context.Customers
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+    }
+}

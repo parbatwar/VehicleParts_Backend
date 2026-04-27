@@ -73,6 +73,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//Customer
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 // Controllers + Swagger 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
