@@ -48,4 +48,13 @@ public class CustomerController : ControllerBase
         var result = await _customerService.SearchCustomersAsync(searchTerm);
         return Ok(result);
     }
+    
+    [HttpGet("{id}/history")]
+    [Authorize(Roles = "Staff,Admin")]
+    public async Task<IActionResult> GetCustomerWithHistory(int id)
+    {
+        var result = await _customerService.GetCustomerWithHistoryAsync(id);
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
 }

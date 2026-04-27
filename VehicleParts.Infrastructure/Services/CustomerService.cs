@@ -115,4 +115,35 @@ public class CustomerService : ICustomerService
             }).ToList()
         };
     }
+    
+    public async Task<CustomerResponseDto?> GetCustomerWithHistoryAsync(int id)
+    {
+        var customer = await _customerRepository.GetByIdWithHistoryAsync(id);
+        if (customer == null) return null;
+    
+        return new CustomerResponseDto
+        {
+            Id = customer.Id,
+            FullName = $"{customer.User.FirstName} {customer.User.LastName}",
+            Email = customer.User.Email!,
+            Phone = customer.User.Phone ?? "",
+            CreditBalance = customer.CreditBalance,
+            RegType = customer.RegType.ToString(),
+            Vehicles = customer.Vehicles.Select(v => new VehicleDto
+            {
+                Id = v.Id,
+                Brand = v.Brand,
+                Model = v.Model,
+                Year = v.Year,
+                PlateNumber = v.PlateNumber
+            }).ToList(),
+            PurchaseHistory = customer.SalesInvoices.Select(s => new PurchaseHistoryDto
+            {
+                Id = s.Id,
+                TotalAmount = s.TotalAmount,
+                PaymentStatus = s.PaymentStatus.ToString(),
+                Date = s.Date
+            }).ToList()
+        };
+    }
 }

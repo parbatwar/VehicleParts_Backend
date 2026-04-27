@@ -8,4 +8,5 @@ public interface ICustomerRepository
     Task<Customer?> GetByIdAsync(int id);
     Task<IEnumerable<Customer>> GetAllAsync();
     Task<Customer?> GetByUserIdAsync(long userId);
+    Task<Customer?> GetByIdWithHistoryAsync(int id);
 }

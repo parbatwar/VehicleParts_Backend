@@ -44,4 +44,13 @@ public class CustomerRepository : ICustomerRepository
             .Include(c => c.Vehicles)
             .FirstOrDefaultAsync(c => c.UserId == userId);
     }
+    
+    public async Task<Customer?> GetByIdWithHistoryAsync(int id)
+    {
+        return await _context.Customers
+            .Include(c => c.User)
+            .Include(c => c.Vehicles)
+            .Include(c => c.SalesInvoices)
+            .FirstOrDefaultAsync(c => c.Id == id);
+    }
 }

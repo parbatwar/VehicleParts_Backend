@@ -9,4 +9,13 @@ public class CustomerResponseDto
     public decimal CreditBalance { get; set; }
     public string RegType { get; set; } = string.Empty;
     public List<VehicleDto> Vehicles { get; set; } = new();
+    public List<PurchaseHistoryDto> PurchaseHistory { get; set; } = new();
+}
+
+public class PurchaseHistoryDto
+{
+    public int Id { get; set; }
+    public decimal TotalAmount { get; set; }
+    public string PaymentStatus { get; set; } = string.Empty;
+    public DateTime Date { get; set; }
 }
