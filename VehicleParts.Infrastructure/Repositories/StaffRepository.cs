@@ -21,6 +21,13 @@ public class StaffRepository : IStaffRepository
             .ToListAsync();
     }
 
+    public async Task<Staff?> GetByIdAsync(int id)
+    {
+        return await _context.Staff
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.Id == id);
+    }
+
     public async Task<Staff> CreateAsync(Staff staff)
     {
         _context.Staff.Add(staff);
