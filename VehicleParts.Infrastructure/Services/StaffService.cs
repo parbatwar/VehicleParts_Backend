@@ -113,4 +113,54 @@ public class StaffService : IStaffService
             IsActive = true
         };
     }
+
+    public async Task<StaffResponseDto> UpdateStaffAsync(int staffId, UpdateStaffDto dto)
+    {
+        // Fetch staff including the User object
+        var staff = await _staffRepository.GetByIdAsync(staffId)
+            ?? throw new KeyNotFoundException("Staff member not found.");
+
+        // 1. Update Identity User fields
+        staff.User.FirstName = dto.FirstName;
+        staff.User.LastName = dto.LastName;
+        staff.User.Email = dto.Email;
+        staff.User.UserName = dto.Email; // Keep username synced with email
+        staff.User.PhoneNumber = dto.Phone;
+
+        var userResult = await _userManager.UpdateAsync(staff.User);
+        if (!userResult.Succeeded)
+        {
+            var errors = string.Join(", ", userResult.Errors.Select(e => e.Description));
+            throw new ArgumentException($"Failed to update identity user: {errors}");
+        }
+
+        // 2. Update Staff-specific fields
+        staff.Position = dto.Position;
+        await _staffRepository.UpdateAsync(staff);
+
+        _logger.LogInformation("Staff ID {StaffId} updated successfully.", staffId);
+
+        return await MapToResponseAsync(staff);
+    }
+
+    public async Task DeleteStaffAsync(int staffId)
+    {
+        var staff = await _staffRepository.GetByIdAsync(staffId)
+            ?? throw new KeyNotFoundException("Staff record not found.");
+
+        // 1. Remove the record from the Staff table
+        await _staffRepository.DeleteAsync(staff);
+
+        // 2. Remove the record from the AspNetUsers table
+        if (staff.User != null)
+        {
+            var result = await _userManager.DeleteAsync(staff.User);
+            if (!result.Succeeded)
+            {
+                throw new Exception("Staff record removed, but failed to delete login account.");
+            }
+        }
+
+        _logger.LogWarning("Staff ID {StaffId} and associated User account permanently deleted.", staffId);
+    }
 }

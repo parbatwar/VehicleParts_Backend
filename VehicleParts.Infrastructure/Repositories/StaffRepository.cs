@@ -49,4 +49,10 @@ public class StaffRepository : IStaffRepository
             .OrderBy(p => p)
             .ToListAsync();
     }
+
+    public async Task DeleteAsync(Staff staff)
+    {
+        _context.Staff.Remove(staff);
+        await _context.SaveChangesAsync();
+    }
 }

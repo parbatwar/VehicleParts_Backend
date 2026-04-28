@@ -8,5 +8,6 @@ public interface IStaffRepository
     Task<Staff?> GetByIdAsync(int id);
     Task<Staff> CreateAsync(Staff staff);
     Task UpdateAsync(Staff staff);
+    Task DeleteAsync(Staff staff);
     Task<IEnumerable<string>> GetDistinctPositionsAsync();
 }
