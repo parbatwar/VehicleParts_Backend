@@ -6,4 +6,6 @@ public interface IStaffService
 {
     Task<IEnumerable<StaffResponseDto>> GetAllAsync();
     Task<StaffResponseDto> CreateAsync(CreateStaffDto dto);
+    Task<StaffResponseDto> UpdateRoleAsync(int staffId, UpdateStaffRoleDto dto);
+    Task<IEnumerable<string>> GetAvailableRolesAsync();
 }

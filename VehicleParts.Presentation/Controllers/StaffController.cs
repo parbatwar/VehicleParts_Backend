@@ -26,13 +26,51 @@ public class StaffController : ControllerBase
         return Ok(staffList);
     }
 
+    [HttpGet("roles")]
+    public async Task<IActionResult> GetAvailableRoles()
+    {
+        var roles = await _staffService.GetAvailableRolesAsync();
+        return Ok(roles);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateStaffDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var staff = await _staffService.CreateAsync(dto);
-        return Ok(staff);
+        try
+        {
+            var staff = await _staffService.CreateAsync(dto);
+            return Ok(staff);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Invalid staff creation request for {Email}.", dto.Email);
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id:int}/role")]
+    public async Task<IActionResult> UpdateRole(int id, [FromBody] UpdateStaffRoleDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var staff = await _staffService.UpdateRoleAsync(id, dto);
+            return Ok(staff);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning(ex, "Staff ID {StaffId} was not found for role update.", id);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Invalid role update request for staff ID {StaffId}.", id);
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }
