@@ -1,0 +1,174 @@
+2026-04-27 12:14:24.712 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 12:17:46.640 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 12:21:54.283 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 13:16:40.799 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 13:21:20.344 +05:45 [INF] Vendor ABC Parts Supplier created successfully.
+2026-04-27 13:26:13.341 +05:45 [INF] Vendor 1 updated successfully.
+2026-04-27 13:27:17.949 +05:45 [INF] Vendor 1 deleted successfully.
+2026-04-27 13:27:28.992 +05:45 [INF] Vendor ABC Parts Supplier created successfully.
+2026-04-27 13:57:45.039 +05:45 [ERR] An unhandled exception occurred.
+System.ArgumentException: Failed to create user: Passwords must have at least one uppercase ('A'-'Z').
+   at VehicleParts.Infrastructure.Services.StaffService.CreateAsync(CreateStaffDto dto) in D:\VehicleParts\VehicleParts_Backend\VehicleParts.Infrastructure\Services\StaffService.cs:line 55
+   at VehicleParts.Presentation.Controllers.StaffController.Create(CreateStaffDto dto) in D:\VehicleParts\VehicleParts_Backend\VehicleParts.Presentation\Controllers\StaffController.cs:line 35
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at VehicleParts.Presentation.Middleware.ExceptionHandlerMiddleware.Invoke(HttpContext httpContext) in D:\VehicleParts\VehicleParts_Backend\VehicleParts.Presentation\Middleware\ExceptionHandlerMiddleware.cs:line 20
+2026-04-27 13:57:49.767 +05:45 [INF] Staff ram@vehicleparts.com created successfully.
+2026-04-27 14:40:19.607 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 14:41:07.089 +05:45 [INF] User ram@vehicleparts.com logged in successfully.
+2026-04-27 15:35:12.889 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 15:54:17.720 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 16:14:58.306 +05:45 [ERR] Failed executing DbCommand (49ms) [Parameters=[@normalizedEmail='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT a."Id", a."AccessFailedCount", a."ConcurrencyStamp", a."Email", a."EmailConfirmed", a."FirstName", a."LastName", a."LockoutEnabled", a."LockoutEnd", a."NormalizedEmail", a."NormalizedUserName", a."PasswordHash", a."Phone", a."PhoneNumber", a."PhoneNumberConfirmed", a."SecurityStamp", a."TwoFactorEnabled", a."UserName"
+FROM "AspNetUsers" AS a
+WHERE a."NormalizedEmail" = @normalizedEmail
+LIMIT 2
+2026-04-27 16:14:58.357 +05:45 [ERR] An exception occurred while iterating over the results of a query for context type 'VehicleParts.Infrastructure.Persistence.AppDbContext'.
+Npgsql.PostgresException (0x80004005): 42703: column a.Phone does not exist
+
+POSITION: 220
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column a.Phone does not exist
+    Position: 220
+    File: parse_relation.c
+    Line: 3827
+    Routine: errorMissingColumn
+Npgsql.PostgresException (0x80004005): 42703: column a.Phone does not exist
+
+POSITION: 220
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column a.Phone does not exist
+    Position: 220
+    File: parse_relation.c
+    Line: 3827
+    Routine: errorMissingColumn
+2026-04-27 16:15:32.476 +05:45 [ERR] Failed executing DbCommand (45ms) [Parameters=[@normalizedEmail='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT a."Id", a."AccessFailedCount", a."ConcurrencyStamp", a."Email", a."EmailConfirmed", a."FirstName", a."LastName", a."LockoutEnabled", a."LockoutEnd", a."NormalizedEmail", a."NormalizedUserName", a."PasswordHash", a."Phone", a."PhoneNumber", a."PhoneNumberConfirmed", a."SecurityStamp", a."TwoFactorEnabled", a."UserName"
+FROM "AspNetUsers" AS a
+WHERE a."NormalizedEmail" = @normalizedEmail
+LIMIT 2
+2026-04-27 16:15:32.526 +05:45 [ERR] An exception occurred while iterating over the results of a query for context type 'VehicleParts.Infrastructure.Persistence.AppDbContext'.
+Npgsql.PostgresException (0x80004005): 42703: column a.Phone does not exist
+
+POSITION: 220
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column a.Phone does not exist
+    Position: 220
+    File: parse_relation.c
+    Line: 3827
+    Routine: errorMissingColumn
+Npgsql.PostgresException (0x80004005): 42703: column a.Phone does not exist
+
+POSITION: 220
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column a.Phone does not exist
+    Position: 220
+    File: parse_relation.c
+    Line: 3827
+    Routine: errorMissingColumn
+2026-04-27 16:18:20.996 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 16:21:56.614 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 16:25:02.026 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 16:35:54.168 +05:45 [INF] Vendor KaKhaGa Suppliers created successfully.
+2026-04-27 17:29:33.079 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 17:47:13.919 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 17:51:10.317 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 17:52:33.984 +05:45 [INF] Vendor 2 updated successfully.
+2026-04-27 17:52:51.615 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 17:59:49.621 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 18:05:40.998 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 18:45:39.190 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 18:46:53.829 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 19:11:13.065 +05:45 [INF] Vendor 3 updated successfully.
+2026-04-27 19:11:19.513 +05:45 [INF] Vendor 2 updated successfully.
+2026-04-27 19:11:27.536 +05:45 [INF] Vendor 2 updated successfully.
+2026-04-27 19:17:52.721 +05:45 [INF] Vendor 3 deleted successfully.
+2026-04-27 19:22:06.737 +05:45 [INF] Vendor 2 updated successfully.
+2026-04-27 19:22:15.933 +05:45 [INF] Vendor 2 updated successfully.
+2026-04-27 21:08:00.375 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 21:11:33.731 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 21:52:20.714 +05:45 [INF] User admin@vehicleparts.com logged in successfully.
+2026-04-27 21:52:45.454 +05:45 [INF] Part Brake Pad created successfully.
+2026-04-27 21:57:26.249 +05:45 [ERR] An unhandled exception occurred.
+System.Collections.Generic.KeyNotFoundException: Vendor with ID 1 not found.
+   at VehicleParts.Infrastructure.Services.PartService.UpdateAsync(Int32 id, UpdatePartDto dto) in D:\VehicleParts\VehicleParts_Backend\VehicleParts.Infrastructure\Services\PartService.cs:line 75
+   at VehicleParts.Presentation.Controllers.PartController.Update(Int32 id, UpdatePartDto dto) in D:\VehicleParts\VehicleParts_Backend\VehicleParts.Presentation\Controllers\PartController.cs:line 52
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at VehicleParts.Presentation.Middleware.ExceptionHandlerMiddleware.Invoke(HttpContext httpContext) in D:\VehicleParts\VehicleParts_Backend\VehicleParts.Presentation\Middleware\ExceptionHandlerMiddleware.cs:line 20
+2026-04-27 21:57:32.665 +05:45 [INF] Part 1 updated successfully.
+2026-04-27 21:58:53.245 +05:45 [INF] Part 1 deleted successfully.
