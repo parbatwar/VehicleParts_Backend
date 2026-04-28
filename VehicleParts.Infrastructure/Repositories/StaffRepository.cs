@@ -34,4 +34,19 @@ public class StaffRepository : IStaffRepository
         await _context.SaveChangesAsync();
         return staff;
     }
+
+    public async Task UpdateAsync(Staff staff)
+    {
+        _context.Entry(staff).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetDistinctPositionsAsync()
+    {
+        return await _context.Staff
+            .Select(s => s.Position)
+            .Distinct()
+            .OrderBy(p => p)
+            .ToListAsync();
+    }
 }

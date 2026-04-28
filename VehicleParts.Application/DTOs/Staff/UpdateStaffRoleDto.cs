@@ -6,5 +6,5 @@ public class UpdateStaffRoleDto
 {
     [Required]
     [MaxLength(50)]
-    public string Role { get; set; } = string.Empty;
+    public string Position { get; set; } = string.Empty;
 }

@@ -26,8 +26,4 @@ public class CreateStaffDto
 
     [MaxLength(100)]
     public string Position { get; set; } = string.Empty;
-
-    [Required]
-    [MaxLength(50)]
-    public string Role { get; set; } = "Staff";
 }
