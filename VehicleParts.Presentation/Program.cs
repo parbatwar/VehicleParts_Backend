@@ -42,6 +42,8 @@ builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<ICustomerInteractionRepository, CustomerInteractionRepository>();
+builder.Services.AddScoped<ICustomerInteractionService, CustomerInteractionService>();
 // ----------
 
 
