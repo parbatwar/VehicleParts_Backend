@@ -57,6 +57,8 @@ builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IPartRepository, PartRepository>();
 builder.Services.AddScoped<IPartService, PartService>();
+builder.Services.AddScoped<ICustomerInteractionRepository, CustomerInteractionRepository>();
+builder.Services.AddScoped<ICustomerInteractionService, CustomerInteractionService>();
 // ----------
 
 // JWT Authentication
@@ -85,6 +87,11 @@ builder.Services.AddAuthentication(options =>
         NameClaimType = ClaimTypes.Name
     };
 });
+
+//Customer
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 // Controllers + Swagger
 builder.Services.AddControllers();
