@@ -18,12 +18,4 @@ namespace VehicleParts.Application.DTOs.Customer
         public string Notes { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
     }
-
-    public class PurchaseHistoryDto
-    {
-        public int Id { get; set; }
-        public decimal TotalAmount { get; set; }
-        public string PaymentStatus { get; set; } = string.Empty;
-        public DateTime Date { get; set; }
-    }
 }
