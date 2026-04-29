@@ -74,6 +74,23 @@ namespace VehicleParts.Presentation.Controllers
                     return Forbid();
                 }
             }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetMyHistory()
+        {
+             
+            try
+            {
+                var userId = GetCurrentUserId();
+                var history = await _interactionService.GetCustomerHistoryAsync(userId);
+                return Ok(history);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
         }
+
+    }
     }
 

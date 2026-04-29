@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using VehicleParts.Application.DTOs.Customer;
 using VehicleParts.Application.Interfaces.IRepositories;
 using VehicleParts.Application.Interfaces.IServices;
@@ -78,5 +79,34 @@ namespace VehicleParts.Infrastructure.Services
 
             return await _repository.CreateReviewAsync(review);
         }
-    }
-}
+
+        //feature 14
+        public async Task<CustomerHistoryDto> GetCustomerHistoryAsync(long userId)
+        {
+            var customer = await GetCustomerByUserIdAsync(userId);
+
+            var appointments = await _repository.GetCustomerAppointmentsAsync(customer.Id);
+            var purchases = await _repository.GetCustomerPurchasesAsync(customer.Id);
+
+            return new CustomerHistoryDto
+            {
+                ServiceHistory = appointments.Select(a => new AppointmentHistoryDto
+                {
+                    Id = a.Id,
+                    VehicleId = a.VehicleId,
+                    Date = a.Date,
+                    Notes = a.Notes ?? string.Empty,
+                    Status = a.Status.ToString()
+                }).ToList(),
+
+                PurchaseHistory = purchases.Select(p => new PurchaseHistoryDto
+                {
+                    Id = p.Id,
+                    TotalAmount = p.TotalAmount,
+                    PaymentStatus = p.PaymentStatus.ToString(), 
+                    Date = p.Date 
+                }).ToList()
+            };
+        }
+    } 
+} 

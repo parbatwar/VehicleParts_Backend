@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using VehicleParts.Application.Interfaces.IRepositories;
 using VehicleParts.Domain.Models;
 using VehicleParts.Infrastructure.Persistence;
@@ -35,6 +37,23 @@ namespace VehicleParts.Infrastructure.Repositories
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
             return review;
+        }
+
+        //feature 14
+        public async Task<IEnumerable<Appointment>> GetCustomerAppointmentsAsync(int customerId)
+        {
+            return await _context.Appointments
+                .Where(a => a.CustomerId == customerId)
+                .OrderByDescending(a => a.Date)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<SalesInvoice>> GetCustomerPurchasesAsync(int customerId)
+        {
+            return await _context.SalesInvoices
+                .Where(s => s.CustomerId == customerId)
+                .OrderByDescending(s => s.Date) 
+                .ToListAsync();
         }
     }
 }
