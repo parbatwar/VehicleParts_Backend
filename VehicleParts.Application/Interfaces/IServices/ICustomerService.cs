@@ -25,5 +25,5 @@ public interface ICustomerService
     Task<IEnumerable<VehicleDto>> GetVehiclesAsync(long userId);
     Task<VehicleDto> AddVehicleAsync(long userId, CreateVehicleDto dto);
     Task<VehicleDto> UpdateVehicleAsync(long userId, int vehicleId, CreateVehicleDto dto);
-    Task DeleteVehicleAsync(long userId, int vehicleId)
+    Task DeleteVehicleAsync(long userId, int vehicleId);
 }

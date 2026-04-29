@@ -37,9 +37,8 @@ namespace VehicleParts.Infrastructure.Services
             {
                 CustomerId = customer.Id,
                 VehicleId = dto.VehicleId,
-                Date = dto.Date,
-                Notes = dto.Notes,
-                
+                Date = DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc)
+                Notes = dto.Notes ?? string.Empty,
                 Status = AppointmentStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
