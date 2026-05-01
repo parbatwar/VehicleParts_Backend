@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using VehicleParts.Application.DTOs.Auth;
 using VehicleParts.Application.DTOs.Customer;
 using VehicleParts.Application.Interfaces.IRepositories;
 using VehicleParts.Application.Interfaces.IServices;
 using VehicleParts.Domain.Models;
-using Microsoft.Extensions.Logging;
-using VehicleParts.Application.DTOs.Auth;
 
 namespace VehicleParts.Infrastructure.Services;
 
@@ -35,7 +36,7 @@ public class CustomerService : ICustomerService
             LastName = dto.LastName,
             Email = dto.Email,
             UserName = dto.Email,
-            Phone = dto.Phone
+            PhoneNumber = dto.Phone
         };
 
         var result = await _userManager.CreateAsync(user, dto.Password);
@@ -66,7 +67,7 @@ public class CustomerService : ICustomerService
             Id = customer.Id,
             FullName = $"{user.FirstName} {user.LastName}",
             Email = user.Email!,
-            Phone = user.Phone ?? "",
+            Phone = user.PhoneNumber ?? "",
             CreditBalance = customer.CreditBalance,
             RegType = customer.RegType.ToString(),
             Vehicles = customer.Vehicles.Select(v => new VehicleDto
@@ -78,6 +79,28 @@ public class CustomerService : ICustomerService
                 PlateNumber = v.PlateNumber
             }).ToList()
         };
+    }
+
+    public async Task DeleteCustomerAsync(int id)
+    {
+        var customer = await _customerRepository.GetByIdAsync(id);
+        if (customer == null)
+            throw new KeyNotFoundException($"Customer with ID {id} not found.");
+
+        var user = await _userManager.FindByIdAsync(customer.UserId.ToString());
+
+        await _customerRepository.DeleteAsync(customer);
+
+        if (user != null)
+        {
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                _logger.LogError("Failed to delete identity user for customer {Id}", id);
+            }
+        }
+
+        _logger.LogInformation("Customer {Id} and associated user deleted successfully.", id);
     }
 
     public async Task<CustomerResponseDto?> GetCustomerByIdAsync(int id)
@@ -97,11 +120,11 @@ public class CustomerService : ICustomerService
     {
         var customers = await _customerRepository.GetAllAsync();
         return customers.Where(c =>
-            c.User.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            c.User.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            c.User.Email!.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            c.User.Phone!.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-            c.Vehicles.Any(v => v.PlateNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            (c.User.FirstName?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+            (c.User.LastName?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+            (c.User.Email?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+            (c.User.PhoneNumber?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+            (c.Vehicles?.Any(v => v.PlateNumber?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ?? false)
         ).Select(MapToDto);
     }
 
@@ -112,7 +135,7 @@ public class CustomerService : ICustomerService
             Id = customer.Id,
             FullName = $"{customer.User.FirstName} {customer.User.LastName}",
             Email = customer.User.Email!,
-            Phone = customer.User.Phone ?? "",
+            Phone = customer.User.PhoneNumber ?? "",
             CreditBalance = customer.CreditBalance,
             RegType = customer.RegType.ToString(),
             Vehicles = customer.Vehicles.Select(v => new VehicleDto
@@ -136,7 +159,7 @@ public class CustomerService : ICustomerService
             Id = customer.Id,
             FullName = $"{customer.User.FirstName} {customer.User.LastName}",
             Email = customer.User.Email!,
-            Phone = customer.User.Phone ?? "",
+            Phone = customer.User.PhoneNumber ?? "",
             CreditBalance = customer.CreditBalance,
             RegType = customer.RegType.ToString(),
             Vehicles = customer.Vehicles.Select(v => new VehicleDto

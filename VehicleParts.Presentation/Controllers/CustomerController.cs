@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Core;
+using VehicleParts.Application.DTOs.Auth;
 using VehicleParts.Application.DTOs.Customer;
 using VehicleParts.Application.Interfaces.IServices;
-using VehicleParts.Application.DTOs.Auth;
 
 namespace VehicleParts.Presentation.Controllers;
 
@@ -11,10 +12,12 @@ namespace VehicleParts.Presentation.Controllers;
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
+    private readonly ILogger<CustomerController> _logger;
 
-    public CustomerController(ICustomerService customerService)
+    public CustomerController(ICustomerService customerService, ILogger<CustomerController> logger)
     {
         _customerService = customerService;
+        _logger = logger;
     }
 
     [HttpPost("register")]
@@ -40,6 +43,26 @@ public class CustomerController : ControllerBase
     {
         var result = await _customerService.GetAllCustomersAsync();
         return Ok(result);
+    }
+
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin,Staff")]
+    public async Task<IActionResult> DeleteCustomer(int id)
+    {
+        try
+        {
+            await _customerService.DeleteCustomerAsync(id);
+            return NoContent(); // 204 Success
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting customer {Id}", id);
+            return StatusCode(500, "Internal Server Error");
+        }
     }
 
     [HttpGet("search")]

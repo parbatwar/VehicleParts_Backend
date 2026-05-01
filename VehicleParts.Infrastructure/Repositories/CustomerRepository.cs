@@ -21,6 +21,12 @@ public class CustomerRepository : ICustomerRepository
         return customer;
     }
 
+    public async Task DeleteAsync(Customer customer)
+    {
+        _context.Customers.Remove(customer);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<Customer?> GetByIdAsync(int id)
     {
         return await _context.Customers

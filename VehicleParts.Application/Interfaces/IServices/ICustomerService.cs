@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using VehicleParts.Application.DTOs.Auth;
 using VehicleParts.Application.DTOs.Customer;
 
@@ -13,8 +10,9 @@ public interface ICustomerService
     Task<IEnumerable<CustomerResponseDto>> GetAllCustomersAsync();
     Task<IEnumerable<CustomerResponseDto>> SearchCustomersAsync(string searchTerm);
     Task<CustomerResponseDto?> GetCustomerWithHistoryAsync(int id);
-    
-    // Registration
+    Task DeleteCustomerAsync(int id);
+
+    // Self-Registration
     Task RegisterSelfAsync(RegisterDto dto);
 
     // Profile Management
