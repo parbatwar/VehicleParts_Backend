@@ -62,6 +62,8 @@ builder.Services.AddScoped<ICustomerInteractionService, CustomerInteractionServi
 builder.Services.AddScoped<IPurchaseInvoiceRepository, PurchaseInvoiceRepository>();
 builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
 builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 // ----------
 
 // JWT Authentication
