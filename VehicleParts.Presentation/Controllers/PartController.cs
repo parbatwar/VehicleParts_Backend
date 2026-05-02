@@ -59,4 +59,11 @@ public class PartController : ControllerBase
         await _partService.DeleteAsync(id);
         return NoContent();
     }
+
+    [HttpGet("vendor/{vendorId}")]
+    public async Task<IActionResult> GetByVendor(int vendorId)
+    {
+        var parts = await _partService.GetByVendorIdAsync(vendorId);
+        return Ok(parts);
+    }
 }

@@ -48,11 +48,9 @@ public class PartService : IPartService
         {
             VendorId = dto.VendorId,
             Name = dto.Name,
-            PartNumber = dto.PartNumber,
             Category = dto.Category,
             UnitPrice = dto.UnitPrice,
             StockQty = dto.StockQty,
-            ReorderLevel = dto.ReorderLevel,
             UpdatedAt = DateTime.UtcNow
         };
 
@@ -69,22 +67,26 @@ public class PartService : IPartService
         if (part == null)
             throw new KeyNotFoundException($"Part with ID {id} not found.");
 
-        // Check vendor exists if changed
-        var vendor = await _vendorRepository.GetByIdAsync(dto.VendorId);
-        if (vendor == null)
-            throw new KeyNotFoundException($"Vendor with ID {dto.VendorId} not found.");
+        if (dto.VendorId.HasValue && dto.VendorId.Value != 0)
+        {
+            var vendor = await _vendorRepository.GetByIdAsync(dto.VendorId.Value);
+            if (vendor == null)
+                throw new KeyNotFoundException($"Vendor with ID {dto.VendorId} not found.");
+
+            part.VendorId = dto.VendorId.Value;
+        }
 
         part.Name = dto.Name;
         part.Category = dto.Category;
         part.UnitPrice = dto.UnitPrice;
         part.StockQty = dto.StockQty;
-        part.ReorderLevel = dto.ReorderLevel;
-        part.VendorId = dto.VendorId;
         part.UpdatedAt = DateTime.UtcNow;
 
         var updated = await _partRepository.UpdateAsync(part);
         _logger.LogInformation("Part {Id} updated successfully.", id);
-        return MapToResponse(updated);
+
+        var result = await _partRepository.GetByIdAsync(updated.Id);
+        return MapToResponse(result!);
     }
 
     public async Task DeleteAsync(int id)
@@ -101,12 +103,16 @@ public class PartService : IPartService
     {
         Id = part.Id,
         Name = part.Name,
-        PartNumber = part.PartNumber,
         Category = part.Category,
         UnitPrice = part.UnitPrice,
         StockQty = part.StockQty,
-        ReorderLevel = part.ReorderLevel,
         VendorName = part.Vendor?.Name ?? string.Empty,
         UpdatedAt = part.UpdatedAt
     };
+
+    public async Task<IEnumerable<PartResponseDto>> GetByVendorIdAsync(int vendorId)
+    {
+        var parts = await _partRepository.GetByVendorIdAsync(vendorId);
+        return parts.Select(MapToResponse);
+    }
 }

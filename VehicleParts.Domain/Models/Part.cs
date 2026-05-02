@@ -20,10 +20,6 @@ public class Part
 
     [Required]
     [MaxLength(50)]
-    public string PartNumber { get; set; } = string.Empty;
-
-    [Required]
-    [MaxLength(50)]
     public string Category { get; set; } = string.Empty;
 
     [Required]
@@ -40,6 +36,5 @@ public class Part
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<PurchaseItem> PurchaseItems { get; set; } = new List<PurchaseItem>();
-
     public ICollection<SalesItem> SalesItems { get; set; } = new List<SalesItem>();
 }

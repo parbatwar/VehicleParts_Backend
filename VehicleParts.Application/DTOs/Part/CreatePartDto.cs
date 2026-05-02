@@ -13,10 +13,6 @@ public class CreatePartDto
 
     [Required]
     [MaxLength(50)]
-    public string PartNumber { get; set; } = string.Empty;
-
-    [Required]
-    [MaxLength(50)]
     public string Category { get; set; } = string.Empty;
 
     [Required]
@@ -26,6 +22,4 @@ public class CreatePartDto
     [Required]
     [Range(0, int.MaxValue)]
     public int StockQty { get; set; }
-
-    public int ReorderLevel { get; set; } = 10;
 }

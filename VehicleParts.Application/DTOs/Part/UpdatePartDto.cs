@@ -16,7 +16,5 @@ public class UpdatePartDto
     [Range(0, int.MaxValue)]
     public int StockQty { get; set; }
 
-    public int ReorderLevel { get; set; } = 10;
-
-    public int VendorId { get; set; }
+    public int? VendorId { get; set; }
 }

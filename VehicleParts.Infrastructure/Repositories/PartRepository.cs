@@ -47,4 +47,11 @@ public class PartRepository : IPartRepository
         _context.Parts.Remove(part);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<Part>> GetByVendorIdAsync(int vendorId)
+    {
+        return await _context.Parts
+            .Where(p => p.VendorId == vendorId)
+            .ToListAsync();
+    }
 }

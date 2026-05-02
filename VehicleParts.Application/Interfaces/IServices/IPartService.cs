@@ -9,4 +9,5 @@ public interface IPartService
     Task<PartResponseDto> CreateAsync(CreatePartDto dto);
     Task<PartResponseDto> UpdateAsync(int id, UpdatePartDto dto);
     Task DeleteAsync(int id);
+    Task<IEnumerable<PartResponseDto>> GetByVendorIdAsync(int vendorId);
 }

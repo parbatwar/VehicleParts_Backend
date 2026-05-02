@@ -9,4 +9,5 @@ public interface IPartRepository
     Task<Part> CreateAsync(Part part);
     Task<Part> UpdateAsync(Part part);
     Task DeleteAsync(Part part);
+    Task<IEnumerable<Part>> GetByVendorIdAsync(int vendorId);
 }
