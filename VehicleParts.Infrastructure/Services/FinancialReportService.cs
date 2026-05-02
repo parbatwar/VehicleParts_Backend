@@ -40,6 +40,11 @@ public class FinancialReportService : IFinancialReportService
         return await GenerateReportAsync("Yearly", start, end);
     }
 
+    public Task SendEmailAsync(string toEmail, string toName, string subject, string body)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task<FinancialReportDto> GenerateReportAsync(
         string reportType, DateTime start, DateTime end)
     {

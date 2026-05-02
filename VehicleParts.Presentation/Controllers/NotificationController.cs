@@ -29,4 +29,11 @@ public class NotificationController : ControllerBase
         await _notificationService.MarkAsReadAsync(id);
         return Ok(new { message = "Notification marked as read." });
     }
+
+    [HttpPost("send-credit-reminders")]
+    public async Task<IActionResult> SendCreditReminders()
+    {
+        await _notificationService.SendCreditRemindersAsync();
+        return Ok(new { message = "Credit reminders sent to all overdue customers." });
+    }
 }

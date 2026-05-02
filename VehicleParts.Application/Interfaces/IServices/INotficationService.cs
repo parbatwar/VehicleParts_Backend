@@ -7,4 +7,5 @@ public interface INotificationService
     Task CreateLowStockNotificationAsync(string partName, int currentStock);
     Task<IEnumerable<NotificationResponseDto>> GetAdminNotificationsAsync();
     Task MarkAsReadAsync(int id);
+    Task SendCreditRemindersAsync();
 }

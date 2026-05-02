@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
+using VehicleParts.Application.DTOs.Email;
 using VehicleParts.Application.Interfaces.IRepositories;
 using VehicleParts.Application.Interfaces.IServices;
 using VehicleParts.Domain.Models;
@@ -13,6 +14,7 @@ using VehicleParts.Infrastructure.Persistence.Seed;
 using VehicleParts.Infrastructure.Repositories;
 using VehicleParts.Infrastructure.Services;
 using VehicleParts.Presentation.Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +67,13 @@ builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 // ----------
+
+// Email settings
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
+// Email service
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"]!;
