@@ -12,15 +12,18 @@ public class StaffService : IStaffService
 {
     private readonly IStaffRepository _staffRepository;
     private readonly UserManager<User> _userManager;
+    private readonly IEmailService _emailService;
     private readonly ILogger<StaffService> _logger;
 
     public StaffService(
         IStaffRepository staffRepository,
         UserManager<User> userManager,
+        IEmailService emailService,
         ILogger<StaffService> logger)
     {
         _staffRepository = staffRepository;
         _userManager = userManager;
+        _emailService = emailService;
         _logger = logger;
     }
 
@@ -59,8 +62,6 @@ public class StaffService : IStaffService
             throw new ArgumentException($"Failed to create user: {errors}");
         }
 
-        // We assign "Staff" as the security role for everyone by default. 
-        // Their "Position" (Technician, etc.) is just a label in the Staff table.
         await _userManager.AddToRoleAsync(user, "Staff");
 
         var staff = new Staff
@@ -72,7 +73,46 @@ public class StaffService : IStaffService
         var created = await _staffRepository.CreateAsync(staff);
         _logger.LogInformation("Staff {Email} created as {Position}.", dto.Email, dto.Position);
 
-        return await MapToResponseAsync(created);
+        // Send credentials email
+        var subject = "Welcome to GearUp — Your Account Details";
+        var body = $@"
+            <h2>Welcome to GearUp System</h2>
+            <p>Dear {dto.FirstName} {dto.LastName},</p>
+            <p>Your staff account has been created successfully. 
+               Here are your login credentials:</p>
+            <table style='border-collapse: collapse; width: 300px;'>
+                <tr>
+                    <td style='padding: 8px; border: 1px solid #ddd;'><strong>Email</strong></td>
+                    <td style='padding: 8px; border: 1px solid #ddd;'>{dto.Email}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px; border: 1px solid #ddd;'><strong>Password</strong></td>
+                    <td style='padding: 8px; border: 1px solid #ddd;'>{dto.Password}</td>
+                </tr>
+                <tr>
+                    <td style='padding: 8px; border: 1px solid #ddd;'><strong>Position</strong></td>
+                    <td style='padding: 8px; border: 1px solid #ddd;'>{dto.Position}</td>
+                </tr>
+            </table>
+            <br/>
+            <p>Please login at <a href='http://localhost:5173'>GearUp System</a></p>
+            <p>We recommend changing your password after first login.</p>
+            <br/>
+            <p>Regards,</p>
+            <p>GearUp Admin</p>
+        ";
+
+        await _emailService.SendEmailAsync(
+            dto.Email,
+            $"{dto.FirstName} {dto.LastName}",
+            subject,
+            body);
+
+        _logger.LogInformation("Credentials email sent to {Email}.", dto.Email);
+
+        // return at the end
+        var staffWithUser = await _staffRepository.GetByIdAsync(created.Id);
+        return await MapToResponseAsync(staffWithUser!);
     }
 
     public async Task<StaffResponseDto> UpdateRoleAsync(int staffId, UpdateStaffRoleDto dto)
