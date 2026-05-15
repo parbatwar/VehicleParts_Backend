@@ -1,4 +1,4 @@
-﻿using MailKit.Net.Smtp;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -37,7 +37,6 @@ public class EmailService : IEmailService
 
             message.To.Add(new MailboxAddress(toName, toEmail));
             message.Subject = subject;
-
             message.Body = new TextPart("html") { Text = body };
 
             using var client = new SmtpClient();

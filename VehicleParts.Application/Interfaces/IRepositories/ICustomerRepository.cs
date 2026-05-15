@@ -11,6 +11,7 @@ public interface ICustomerRepository
     Task<Customer> CreateAsync(Customer customer);
     Task<Customer?> GetByIdAsync(int id);
     Task<IEnumerable<Customer>> GetAllAsync();
+    Task<IEnumerable<Customer>> GetAllWithSalesAsync();
     Task<Customer?> GetByUserIdAsync(long userId);
     Task<Customer?> GetByIdWithHistoryAsync(int id);
     Task DeleteAsync(Customer customer);

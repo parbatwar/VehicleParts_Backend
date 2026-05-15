@@ -1,5 +1,6 @@
 using VehicleParts.Application.DTOs.Auth;
 using VehicleParts.Application.DTOs.Customer;
+using VehicleParts.Application.DTOs.Reports;
 
 namespace VehicleParts.Application.Interfaces.IServices;
 
@@ -11,15 +12,13 @@ public interface ICustomerService
     Task<IEnumerable<CustomerResponseDto>> SearchCustomersAsync(string searchTerm);
     Task<CustomerResponseDto?> GetCustomerWithHistoryAsync(int id);
     Task DeleteCustomerAsync(int id);
-
-    // Self-Registration
+    Task<IEnumerable<CustomerReportDto>> GetRegularCustomersReportAsync();
+    Task<IEnumerable<CustomerReportDto>> GetHighSpendersReportAsync();
+    Task<IEnumerable<CustomerReportDto>> GetPendingCreditsReportAsync();
+    Task<CustomerReportsSummaryDto> GetCustomerReportsSummaryAsync();
     Task RegisterSelfAsync(RegisterDto dto);
-
-    // Profile Management
     Task<CustomerProfileDto> GetProfileAsync(long userId);
     Task<CustomerProfileDto> UpdateProfileAsync(long userId, UpdateProfileDto dto);
-
-    // Vehicle Management
     Task<IEnumerable<VehicleDto>> GetVehiclesAsync(long userId);
     Task<VehicleDto> AddVehicleAsync(long userId, CreateVehicleDto dto);
     Task<VehicleDto> UpdateVehicleAsync(long userId, int vehicleId, CreateVehicleDto dto);

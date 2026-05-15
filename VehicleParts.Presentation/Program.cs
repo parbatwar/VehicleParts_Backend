@@ -15,10 +15,8 @@ using VehicleParts.Infrastructure.Repositories;
 using VehicleParts.Infrastructure.Services;
 using VehicleParts.Presentation.Middleware;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -29,15 +27,12 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Serilog
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-// Database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity
 builder.Services.AddIdentity<User, Role>(options =>
 {
     options.Password.RequiredLength = 8;
@@ -49,7 +44,6 @@ builder.Services.AddIdentity<User, Role>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
-// ----------
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -66,16 +60,13 @@ builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
 builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
-// ----------
+builder.Services.AddHostedService<NotificationBackgroundService>();
 
-// Email settings
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
-// Email service
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-// JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
 var jwtAudience = builder.Configuration["Jwt:Audience"]!;
@@ -102,12 +93,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-//Customer
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
-builder.Services.AddScoped<ICustomerService, CustomerService>();
 
-// Controllers + Swagger
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
@@ -115,18 +102,24 @@ Console.WriteLine("--- App is starting up! ---");
 var app = builder.Build();
 Console.WriteLine("--- Services Built, checking Seeder... ---");
 
-// Seed admin
 using (var scope = app.Services.CreateScope())
 {
     Console.WriteLine("--- Seeder Scope Active ---");
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
 
-    await AdminSeeder.SeedAsync(userManager, roleManager);
-    Console.WriteLine("--- Seeding Finished Successfully! ---");
+    try
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+
+        await AdminSeeder.SeedAsync(userManager, roleManager);
+        Console.WriteLine("--- Seeding Finished Successfully! ---");
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Admin seeding failed during startup. The API will continue running, but database-backed features may not work until the connection issue is fixed.");
+    }
 }
 
-// Middleware Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VehicleParts.Application.DTOs.Auth;
 using VehicleParts.Application.DTOs.Customer;
+using VehicleParts.Application.DTOs.Reports;
 using VehicleParts.Application.Interfaces.IRepositories;
 using VehicleParts.Application.Interfaces.IServices;
 using VehicleParts.Domain.Models;
@@ -17,9 +18,9 @@ public class CustomerService : ICustomerService
     private readonly ILogger<CustomerService> _logger;
 
     public CustomerService(
-        ICustomerRepository customerRepository, 
-        IVehicleRepository vehicleRepo, 
-        UserManager<User> userManager, 
+        ICustomerRepository customerRepository,
+        IVehicleRepository vehicleRepo,
+        UserManager<User> userManager,
         ILogger<CustomerService> logger)
     {
         _customerRepository = customerRepository;
@@ -148,12 +149,12 @@ public class CustomerService : ICustomerService
             }).ToList()
         };
     }
-    
+
     public async Task<CustomerResponseDto?> GetCustomerWithHistoryAsync(int id)
     {
         var customer = await _customerRepository.GetByIdWithHistoryAsync(id);
         if (customer == null) return null;
-    
+
         return new CustomerResponseDto
         {
             Id = customer.Id,
@@ -180,7 +181,79 @@ public class CustomerService : ICustomerService
         };
     }
 
-    // Komal's addition for self-registration
+    public async Task<IEnumerable<CustomerReportDto>> GetRegularCustomersReportAsync()
+    {
+        var customers = await _customerRepository.GetAllWithSalesAsync();
+
+        return customers
+            .Where(c => c.SalesInvoices.Count >= 2)
+            .Select(MapToReportDto)
+            .OrderByDescending(c => c.TotalPurchases)
+            .ThenByDescending(c => c.TotalSpent);
+    }
+
+    public async Task<IEnumerable<CustomerReportDto>> GetHighSpendersReportAsync()
+    {
+        var customers = await _customerRepository.GetAllWithSalesAsync();
+
+        return customers
+            .Where(c => c.SalesInvoices.Count > 0)
+            .Select(MapToReportDto)
+            .OrderByDescending(c => c.TotalSpent)
+            .ThenByDescending(c => c.TotalPurchases);
+    }
+
+    public async Task<IEnumerable<CustomerReportDto>> GetPendingCreditsReportAsync()
+    {
+        var overdueThreshold = DateTime.UtcNow.AddMonths(-1);
+        var customers = await _customerRepository.GetAllWithSalesAsync();
+
+        return customers
+            .Where(c => c.CreditBalance > 0 || c.SalesInvoices.Any(i =>
+                (i.PaymentStatus == PaymentStatus.Credit || i.PaymentStatus == PaymentStatus.Overdue) &&
+                i.Date <= overdueThreshold))
+            .Select(MapToReportDto)
+            .OrderByDescending(c => c.OutstandingCredit)
+            .ThenByDescending(c => c.OverdueInvoices)
+            .ThenBy(c => c.FullName);
+    }
+
+    public async Task<CustomerReportsSummaryDto> GetCustomerReportsSummaryAsync()
+    {
+        var customers = (await _customerRepository.GetAllWithSalesAsync()).ToList();
+
+        var regularCustomers = customers
+            .Where(c => c.SalesInvoices.Count >= 2)
+            .Select(MapToReportDto)
+            .OrderByDescending(c => c.TotalPurchases)
+            .ThenByDescending(c => c.TotalSpent)
+            .ToList();
+
+        var highSpenders = customers
+            .Where(c => c.SalesInvoices.Count > 0)
+            .Select(MapToReportDto)
+            .OrderByDescending(c => c.TotalSpent)
+            .ThenByDescending(c => c.TotalPurchases)
+            .ToList();
+
+        var overdueThreshold = DateTime.UtcNow.AddMonths(-1);
+        var pendingCredits = customers
+            .Where(c => c.CreditBalance > 0 || c.SalesInvoices.Any(i =>
+                (i.PaymentStatus == PaymentStatus.Credit || i.PaymentStatus == PaymentStatus.Overdue) &&
+                i.Date <= overdueThreshold))
+            .Select(MapToReportDto)
+            .OrderByDescending(c => c.OutstandingCredit)
+            .ThenByDescending(c => c.OverdueInvoices)
+            .ThenBy(c => c.FullName)
+            .ToList();
+
+        return new CustomerReportsSummaryDto
+        {
+            RegularCustomers = regularCustomers,
+            HighSpenders = highSpenders,
+            PendingCredits = pendingCredits
+        };
+    }
 
     public async Task RegisterSelfAsync(RegisterDto dto)
     {
@@ -225,12 +298,10 @@ public class CustomerService : ICustomerService
         return MapToProfileDto(customer);
     }
 
-
     public async Task<CustomerProfileDto> UpdateProfileAsync(long userId, UpdateProfileDto dto)
     {
         var customer = await GetCustomerOrThrowAsync(userId);
 
-        // Update user identity fields
         customer.User.FirstName = dto.FirstName;
         customer.User.LastName = dto.LastName;
         customer.User.PhoneNumber = dto.Phone;
@@ -292,12 +363,37 @@ public class CustomerService : ICustomerService
         await _vehicleRepo.DeleteAsync(vehicle);
     }
 
-    // Helper methods
     private async Task<Customer> GetCustomerOrThrowAsync(long userId)
     {
         var customer = await _customerRepository.GetByUserIdAsync(userId);
         if (customer == null) throw new KeyNotFoundException("Customer profile not found.");
         return customer;
+    }
+
+    private static CustomerReportDto MapToReportDto(Customer customer)
+    {
+        var overdueThreshold = DateTime.UtcNow.AddMonths(-1);
+        var salesInvoices = customer.SalesInvoices.OrderByDescending(i => i.Date).ToList();
+        var overdueInvoiceEntries = salesInvoices.Where(i =>
+            (i.PaymentStatus == PaymentStatus.Credit || i.PaymentStatus == PaymentStatus.Overdue) &&
+            i.Date <= overdueThreshold).ToList();
+        var overdueInvoices = overdueInvoiceEntries.Count;
+        var pendingCreditAmount = overdueInvoiceEntries.Sum(i => i.TotalAmount);
+
+        return new CustomerReportDto
+        {
+            CustomerId = customer.Id,
+            FullName = $"{customer.User.FirstName} {customer.User.LastName}",
+            Email = customer.User.Email ?? string.Empty,
+            Phone = customer.User.PhoneNumber ?? string.Empty,
+            TotalPurchases = salesInvoices.Count,
+            TotalSpent = salesInvoices.Sum(i => i.TotalAmount),
+            OutstandingCredit = customer.CreditBalance,
+            PendingCreditAmount = pendingCreditAmount,
+            OverdueInvoices = overdueInvoices,
+            HasOverdueCredit = overdueInvoices > 0,
+            LastPurchaseDate = salesInvoices.FirstOrDefault()?.Date
+        };
     }
 
     private static CustomerProfileDto MapToProfileDto(Customer customer) => new()

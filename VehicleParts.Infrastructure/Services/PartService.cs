@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using VehicleParts.Application.DTOs.Part;
 using VehicleParts.Application.Interfaces.IRepositories;
 using VehicleParts.Application.Interfaces.IServices;
@@ -10,15 +10,18 @@ public class PartService : IPartService
 {
     private readonly IPartRepository _partRepository;
     private readonly IVendorRepository _vendorRepository;
+    private readonly INotificationService _notificationService;
     private readonly ILogger<PartService> _logger;
 
     public PartService(
         IPartRepository partRepository,
         IVendorRepository vendorRepository,
+        INotificationService notificationService,
         ILogger<PartService> logger)
     {
         _partRepository = partRepository;
         _vendorRepository = vendorRepository;
+        _notificationService = notificationService;
         _logger = logger;
     }
 
@@ -39,7 +42,6 @@ public class PartService : IPartService
 
     public async Task<PartResponseDto> CreateAsync(CreatePartDto dto)
     {
-        // Check vendor exists
         var vendor = await _vendorRepository.GetByIdAsync(dto.VendorId);
         if (vendor == null)
             throw new KeyNotFoundException($"Vendor with ID {dto.VendorId} not found.");
@@ -55,6 +57,11 @@ public class PartService : IPartService
         };
 
         var created = await _partRepository.CreateAsync(part);
+        if (created.StockQty < 10)
+        {
+            await _notificationService.CreateLowStockNotificationAsync(created.Name, created.StockQty);
+        }
+
         _logger.LogInformation("Part {Name} created successfully.", part.Name);
 
         var partWithVendor = await _partRepository.GetByIdAsync(created.Id);
@@ -83,6 +90,11 @@ public class PartService : IPartService
         part.UpdatedAt = DateTime.UtcNow;
 
         var updated = await _partRepository.UpdateAsync(part);
+        if (updated.StockQty < 10)
+        {
+            await _notificationService.CreateLowStockNotificationAsync(updated.Name, updated.StockQty);
+        }
+
         _logger.LogInformation("Part {Id} updated successfully.", id);
 
         var result = await _partRepository.GetByIdAsync(updated.Id);

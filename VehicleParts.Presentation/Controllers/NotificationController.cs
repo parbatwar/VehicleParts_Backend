@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VehicleParts.Application.Interfaces.IServices;
 
@@ -23,7 +23,7 @@ public class NotificationController : ControllerBase
         return Ok(notifications);
     }
 
-    [HttpPatch("{id}/read")]
+    [HttpPatch("{id:int}/read")]
     public async Task<IActionResult> MarkAsRead(int id)
     {
         await _notificationService.MarkAsReadAsync(id);
@@ -35,5 +35,12 @@ public class NotificationController : ControllerBase
     {
         await _notificationService.SendCreditRemindersAsync();
         return Ok(new { message = "Credit reminders sent to all overdue customers." });
+    }
+
+    [HttpPost("process")]
+    public async Task<IActionResult> ProcessNotifications(CancellationToken cancellationToken)
+    {
+        await _notificationService.ProcessAutomatedNotificationsAsync(cancellationToken);
+        return Ok(new { message = "Automated notifications processed successfully." });
     }
 }

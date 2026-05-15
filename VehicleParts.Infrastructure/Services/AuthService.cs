@@ -24,9 +24,10 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.Name, user.Email!),
             new Claim("email", user.Email!),
             new Claim("Id", user.Id.ToString()),
-            new Claim("role", string.Join(",", userRoles)),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)

@@ -43,6 +43,15 @@ public class CustomerRepository : ICustomerRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Customer>> GetAllWithSalesAsync()
+    {
+        return await _context.Customers
+            .Include(c => c.User)
+            .Include(c => c.Vehicles)
+            .Include(c => c.SalesInvoices)
+            .ToListAsync();
+    }
+
     public async Task<Customer?> GetByUserIdAsync(long userId)
     {
         return await _context.Customers

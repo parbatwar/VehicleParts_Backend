@@ -1,4 +1,4 @@
-﻿namespace VehicleParts.Application.Interfaces.IServices;
+namespace VehicleParts.Application.Interfaces.IServices;
 
 public interface IEmailService
 {

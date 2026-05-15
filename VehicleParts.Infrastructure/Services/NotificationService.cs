@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VehicleParts.Application.DTOs.Notification;
@@ -11,6 +11,8 @@ namespace VehicleParts.Infrastructure.Services;
 
 public class NotificationService : INotificationService
 {
+    private const int LowStockThreshold = 10;
+
     private readonly INotificationRepository _notificationRepository;
     private readonly AppDbContext _context;
     private readonly IEmailService _emailService;
@@ -33,21 +35,38 @@ public class NotificationService : INotificationService
 
     public async Task CreateLowStockNotificationAsync(string partName, int currentStock)
     {
-        // Find admin user
         var admins = await _userManager.GetUsersInRoleAsync("Admin");
-        var admin = admins.FirstOrDefault();
-        if (admin == null) return;
-
-        var notification = new Notification
+        if (admins.Count == 0)
         {
-            UserId = admin.Id,
-            Type = NotificationType.LowStock,
-            Message = $"Low stock alert: '{partName}' has only {currentStock} units remaining. Please restock soon.",
-            IsRead = false,
-            CreatedAt = DateTime.UtcNow
-        };
+            return;
+        }
 
-        await _notificationRepository.CreateAsync(notification);
+        var today = DateTime.UtcNow.Date;
+        var message = $"Low stock alert: '{partName}' has only {currentStock} units remaining. Please restock soon.";
+
+        foreach (var admin in admins)
+        {
+            var exists = await _context.Notifications.AnyAsync(n =>
+                n.UserId == admin.Id &&
+                n.Type == NotificationType.LowStock &&
+                n.Message == message &&
+                n.CreatedAt >= today);
+
+            if (exists)
+            {
+                continue;
+            }
+
+            await _notificationRepository.CreateAsync(new Notification
+            {
+                UserId = admin.Id,
+                Type = NotificationType.LowStock,
+                Message = message,
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            });
+        }
+
         _logger.LogInformation("Low stock notification created for part {PartName}.", partName);
     }
 
@@ -62,6 +81,7 @@ public class NotificationService : INotificationService
         return notifications.Select(n => new NotificationResponseDto
         {
             Id = n.Id,
+            UserId = n.UserId,
             Type = n.Type.ToString(),
             Message = n.Message,
             IsRead = n.IsRead,
@@ -79,31 +99,52 @@ public class NotificationService : INotificationService
         await _notificationRepository.UpdateAsync(notification);
     }
 
-
-    // Email
-
     public async Task SendCreditRemindersAsync()
+    {
+        await ProcessOverdueCreditRemindersAsync(CancellationToken.None);
+    }
+
+    public async Task ProcessAutomatedNotificationsAsync(CancellationToken cancellationToken = default)
+    {
+        var lowStockParts = await _context.Parts
+            .Where(p => p.StockQty < LowStockThreshold)
+            .OrderBy(p => p.StockQty)
+            .ToListAsync(cancellationToken);
+
+        foreach (var part in lowStockParts)
+        {
+            await CreateLowStockNotificationAsync(part.Name, part.StockQty);
+        }
+
+        await ProcessOverdueCreditRemindersAsync(cancellationToken);
+    }
+
+    private async Task ProcessOverdueCreditRemindersAsync(CancellationToken cancellationToken)
     {
         var oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
 
-        // Find all overdue sales invoices older than 1 month
         var overdueInvoices = await _context.SalesInvoices
             .Include(s => s.Customer)
                 .ThenInclude(c => c.User)
-            .Where(s => s.PaymentStatus == PaymentStatus.Overdue
+            .Where(s => (s.PaymentStatus == PaymentStatus.Credit || s.PaymentStatus == PaymentStatus.Overdue)
                      && s.Date <= oneMonthAgo)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         foreach (var invoice in overdueInvoices)
         {
             var customer = invoice.Customer;
             var user = customer.User;
+            var fullName = $"{user.FirstName} {user.LastName}";
 
-            // Send email
-            var subject = "Payment Reminder — VehicleParts";
+            if (invoice.PaymentStatus == PaymentStatus.Credit)
+            {
+                invoice.PaymentStatus = PaymentStatus.Overdue;
+            }
+
+            var subject = "Payment Reminder - VehicleParts";
             var body = $@"
             <h2>Payment Reminder</h2>
-            <p>Dear {user.FirstName} {user.LastName},</p>
+            <p>Dear {fullName},</p>
             <p>This is a reminder that you have an outstanding balance 
                of <strong>Rs. {invoice.TotalAmount}</strong> 
                on Invoice #{invoice.Id} dated {invoice.Date:MMMM dd, yyyy}.</p>
@@ -115,20 +156,18 @@ public class NotificationService : INotificationService
 
             await _emailService.SendEmailAsync(
                 user.Email!,
-                $"{user.FirstName} {user.LastName}",
+                fullName,
                 subject,
                 body);
 
-            // Also create notification record
             var admins = await _userManager.GetUsersInRoleAsync("Admin");
-            var admin = admins.FirstOrDefault();
-            if (admin != null)
+            foreach (var admin in admins)
             {
                 await _notificationRepository.CreateAsync(new Notification
                 {
                     UserId = admin.Id,
                     Type = NotificationType.CreditReminder,
-                    Message = $"Credit reminder sent to {user.FirstName} {user.LastName} for Invoice #{invoice.Id} — Rs. {invoice.TotalAmount}",
+                    Message = $"Credit reminder sent to {fullName} for Invoice #{invoice.Id} - Rs. {invoice.TotalAmount}",
                     IsRead = false,
                     CreatedAt = DateTime.UtcNow
                 });
@@ -138,8 +177,7 @@ public class NotificationService : INotificationService
                 "Credit reminder sent to {Email} for Invoice #{InvoiceId}.",
                 user.Email, invoice.Id);
         }
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
-
-
-
 }

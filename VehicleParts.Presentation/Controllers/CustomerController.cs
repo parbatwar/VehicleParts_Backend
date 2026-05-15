@@ -52,7 +52,7 @@ public class CustomerController : ControllerBase
         try
         {
             await _customerService.DeleteCustomerAsync(id);
-            return NoContent(); // 204 Success
+            return NoContent();
         }
         catch (KeyNotFoundException ex)
         {
@@ -72,7 +72,7 @@ public class CustomerController : ControllerBase
         var result = await _customerService.SearchCustomersAsync(searchTerm);
         return Ok(result);
     }
-    
+
     [HttpGet("{id}/history")]
     [Authorize(Roles = "Staff,Admin")]
     public async Task<IActionResult> GetCustomerWithHistory(int id)
@@ -82,9 +82,38 @@ public class CustomerController : ControllerBase
         return Ok(result);
     }
 
-    // Komal's Part
+    [HttpGet("reports/regulars")]
+    [Authorize(Roles = "Staff,Admin")]
+    public async Task<IActionResult> GetRegularCustomersReport()
+    {
+        var result = await _customerService.GetRegularCustomersReportAsync();
+        return Ok(result);
+    }
 
-    // 1. Self Registration (Open Endpoint)
+    [HttpGet("reports/high-spenders")]
+    [Authorize(Roles = "Staff,Admin")]
+    public async Task<IActionResult> GetHighSpendersReport()
+    {
+        var result = await _customerService.GetHighSpendersReportAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("reports/pending-credits")]
+    [Authorize(Roles = "Staff,Admin")]
+    public async Task<IActionResult> GetPendingCreditsReport()
+    {
+        var result = await _customerService.GetPendingCreditsReportAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("reports/summary")]
+    [Authorize(Roles = "Staff,Admin")]
+    public async Task<IActionResult> GetCustomerReportsSummary()
+    {
+        var result = await _customerService.GetCustomerReportsSummaryAsync();
+        return Ok(result);
+    }
+
     [HttpPost("self-register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
@@ -95,7 +124,6 @@ public class CustomerController : ControllerBase
         return Ok(new { message = "Registration successful. Please login." });
     }
 
-    // 2. Get Profile
     [HttpGet("profile")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> GetProfile()
@@ -104,7 +132,6 @@ public class CustomerController : ControllerBase
         return Ok(profile);
     }
 
-    // 3. Update Profile
     [HttpPut("profile")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
@@ -115,7 +142,6 @@ public class CustomerController : ControllerBase
         return Ok(updated);
     }
 
-    // 4. Get Vehicles
     [HttpGet("vehicles")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> GetVehicles()
@@ -124,7 +150,6 @@ public class CustomerController : ControllerBase
         return Ok(vehicles);
     }
 
-    // 5. Add Vehicle
     [HttpPost("vehicles")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> AddVehicle([FromBody] CreateVehicleDto dto)
@@ -135,7 +160,6 @@ public class CustomerController : ControllerBase
         return Ok(vehicle);
     }
 
-    // 6. Update Vehicle
     [HttpPut("vehicles/{id}")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> UpdateVehicle(int id, [FromBody] CreateVehicleDto dto)
@@ -146,7 +170,6 @@ public class CustomerController : ControllerBase
         return Ok(vehicle);
     }
 
-    // 7. Delete Vehicle
     [HttpDelete("vehicles/{id}")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> DeleteVehicle(int id)
@@ -155,9 +178,6 @@ public class CustomerController : ControllerBase
         return NoContent();
     }
 
-
-
-    // Helper to extract User ID from JWT Token Claims
     private long GetUserId()
     {
         var idClaim = User.FindFirst("Id")?.Value;
@@ -165,7 +185,7 @@ public class CustomerController : ControllerBase
         {
             return userId;
         }
+
         throw new UnauthorizedAccessException("Invalid token claims.");
     }
-
 }
