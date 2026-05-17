@@ -13,7 +13,7 @@ public class CreateSaleDto
     [Required]
     public List<SaleItemDto> Items { get; set; } = new();
 
-    public string PaymentStatus { get; set; } = "paid";
+    public string PaymentStatus { get; set; } = "Paid";
 }
 
 public class SaleItemDto
