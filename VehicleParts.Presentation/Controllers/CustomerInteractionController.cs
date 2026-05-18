@@ -67,7 +67,15 @@ public class CustomerInteractionController : ControllerBase
             var review = await _interactionService.SubmitReviewAsync(userId, dto);
             return Ok(new { message = "Review submitted successfully.", reviewId = review.Id });
         }
-        catch (Exception ex) { return BadRequest(ex.Message); }
+        catch (InvalidOperationException ex)
+        {
+            // Returns the friendly error message we wrote in the Service
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [Authorize(Roles = "Customer")]

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Threading.Tasks;
 using VehicleParts.Application.DTOs.Customer;
 using VehicleParts.Application.Interfaces.IRepositories;
 using VehicleParts.Application.Interfaces.IServices;
@@ -56,7 +55,6 @@ namespace VehicleParts.Infrastructure.Services
                 CustomerId = customer.Id,
                 PartName = dto.PartName,
                 Description = dto.Description,
-                
                 Status = PartRequestStatus.Open,
                 CreatedAt = DateTime.UtcNow
             };
@@ -67,6 +65,13 @@ namespace VehicleParts.Infrastructure.Services
         public async Task<Review> SubmitReviewAsync(long userId, CreateReviewDto dto)
         {
             var customer = await GetCustomerByUserIdAsync(userId);
+
+            // Validation to ensure customer has a completed service
+            var hasCompletedService = await _repository.HasCompletedAppointmentAsync(customer.Id);
+            if (!hasCompletedService)
+            {
+                throw new InvalidOperationException("You can only submit a review after completing at least one service appointment.");
+            }
 
             var review = new Review
             {
@@ -79,13 +84,15 @@ namespace VehicleParts.Infrastructure.Services
             return await _repository.CreateReviewAsync(review);
         }
 
-        //feature 14
         public async Task<CustomerHistoryDto> GetCustomerHistoryAsync(long userId)
         {
             var customer = await GetCustomerByUserIdAsync(userId);
 
             var appointments = await _repository.GetCustomerAppointmentsAsync(customer.Id);
             var purchases = await _repository.GetCustomerPurchasesAsync(customer.Id);
+
+            // Fetch part requests from repository
+            var partRequests = await _repository.GetCustomerPartRequestsAsync(customer.Id);
 
             return new CustomerHistoryDto
             {
@@ -102,10 +109,20 @@ namespace VehicleParts.Infrastructure.Services
                 {
                     Id = p.Id,
                     TotalAmount = p.TotalAmount,
-                    PaymentStatus = p.PaymentStatus.ToString(), 
-                    Date = p.Date 
+                    PaymentStatus = p.PaymentStatus.ToString(),
+                    Date = p.Date
+                }).ToList(),
+
+                // Map part requests to the DTO
+                PartRequestHistory = partRequests.Select(pr => new PartRequestHistoryDto
+                {
+                    Id = pr.Id,
+                    PartName = pr.PartName,
+                    Description = pr.Description,
+                    Status = pr.Status.ToString(),
+                    CreatedAt = pr.CreatedAt
                 }).ToList()
             };
         }
-    } 
-} 
+    }
+}

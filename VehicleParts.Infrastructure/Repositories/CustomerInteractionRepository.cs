@@ -55,5 +55,20 @@ namespace VehicleParts.Infrastructure.Repositories
                 .OrderByDescending(s => s.Date) 
                 .ToListAsync();
         }
+
+        public async Task<bool> HasCompletedAppointmentAsync(int customerId)
+        {
+            return await _context.Appointments
+                .AnyAsync(a => a.CustomerId == customerId && a.Status == AppointmentStatus.Done);
+        }
+
+         //Fetch all part requests for the customer
+        public async Task<IEnumerable<PartRequest>> GetCustomerPartRequestsAsync(int customerId)
+        {
+            return await _context.PartRequests
+                .Where(pr => pr.CustomerId == customerId)
+                .OrderByDescending(pr => pr.CreatedAt)
+                .ToListAsync();
+        }
     }
 }
