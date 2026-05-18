@@ -7,7 +7,7 @@ namespace VehicleParts.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Staff")]
 public class PartController : ControllerBase
 {
     private readonly IPartService _partService;
