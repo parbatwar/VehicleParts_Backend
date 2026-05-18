@@ -8,4 +8,5 @@ public interface ISaleRepository
     Task<SalesInvoice?> GetByIdAsync(int id);
     Task<IEnumerable<SalesInvoice>> GetByCustomerIdAsync(int customerId);
     Task<SalesInvoice> CreateAsync(SalesInvoice invoice);
+    Task<SalesInvoice> UpdateAsync(SalesInvoice invoice);
 }

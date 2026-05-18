@@ -5,6 +5,7 @@ namespace VehicleParts.Application.Interfaces.IServices;
 public interface IStaffService
 {
     Task<IEnumerable<StaffResponseDto>> GetAllAsync();
+    Task<StaffResponseDto?> GetByUserIdAsync(long userId);
     Task<StaffResponseDto> CreateAsync(CreateStaffDto dto);
     Task<StaffResponseDto> UpdateRoleAsync(int staffId, UpdateStaffRoleDto dto);
     Task<StaffResponseDto> UpdateStaffAsync(int staffId, UpdateStaffDto dto);

@@ -8,9 +8,6 @@ public class CreateSaleDto
     public int CustomerId { get; set; }
 
     [Required]
-    public int StaffId { get; set; }
-
-    [Required]
     public List<SaleItemDto> Items { get; set; } = new();
 
     public string PaymentStatus { get; set; } = "Paid";

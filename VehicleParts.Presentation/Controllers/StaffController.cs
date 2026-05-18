@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using VehicleParts.Application.DTOs.Staff;
 using VehicleParts.Application.Interfaces.IServices;
 
@@ -117,5 +118,28 @@ public class StaffController : ControllerBase
             _logger.LogError(ex, "Error deleting staff member {Id}", id);
             return StatusCode(500, "Internal Server Error");
         }
+    }
+
+    [HttpGet("me")]
+    [Authorize(Roles = "Admin,Staff")]  // Both Admin and Staff can access this
+    public async Task<IActionResult> GetMyProfile()
+    {
+        // Get user ID from token
+        var userIdClaim = User.FindFirst("Id")?.Value
+            ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized(new { message = "User ID not found in token" });
+
+        if (!long.TryParse(userIdClaim, out var userId))
+            return BadRequest(new { message = "Invalid user ID format" });
+
+        // Find staff by UserId
+        var staff = await _staffService.GetByUserIdAsync(userId);
+
+        if (staff == null)
+            return NotFound(new { message = $"Staff profile not found for user ID: {userId}" });
+
+        return Ok(staff);
     }
 }

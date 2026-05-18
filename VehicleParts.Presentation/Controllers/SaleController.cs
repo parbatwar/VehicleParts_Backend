@@ -53,4 +53,20 @@ public class SaleController : ControllerBase
         var sale = await _saleService.ProcessSaleAsync(dto);
         return Ok(sale);
     }
+
+    [HttpPost("{id}/send-invoice")]
+    [Authorize(Roles = "Staff,Admin")]
+    public async Task<IActionResult> SendInvoice(int id)
+    {
+        await _saleService.SendInvoiceEmailAsync(id);
+        return Ok(new { message = "Invoice sent successfully." });
+    }
+
+    [HttpPatch("{id}/mark-paid")]
+    [Authorize(Roles = "Staff,Admin")]
+    public async Task<IActionResult> MarkAsPaid(int id)
+    {
+        var sale = await _saleService.MarkAsPaidAsync(id);
+        return Ok(sale);
+    }
 }

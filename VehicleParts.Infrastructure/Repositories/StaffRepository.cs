@@ -55,4 +55,18 @@ public class StaffRepository : IStaffRepository
         _context.Staff.Remove(staff);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Staff?> GetByUserIdAsync(long userId)
+    {
+        return await _context.Staff
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.UserId == userId);
+    }
+
+    public async Task<Staff?> GetByEmailAsync(string email)
+    {
+        return await _context.Staff
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.User.Email == email);
+    }
 }
