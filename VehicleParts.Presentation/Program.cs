@@ -15,7 +15,6 @@ using VehicleParts.Infrastructure.Repositories;
 using VehicleParts.Infrastructure.Services;
 using VehicleParts.Presentation.Middleware;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
@@ -49,7 +48,7 @@ builder.Services.AddIdentity<User, Role>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
-// ----------
+// Application Core Services 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -68,7 +67,8 @@ builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<ISaleService, SaleService>();
-// ----------
+
+builder.Services.AddHttpClient(); 
 
 // Email settings
 builder.Services.Configure<EmailSettings>(

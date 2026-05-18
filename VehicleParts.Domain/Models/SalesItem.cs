@@ -9,10 +9,10 @@ public class SalesItem
     public int Id { get; set; }
 
     [Required]
-    public int InvoiceId { get; set; }
+    public int SalesInvoiceId { get; set; }
 
-    [ForeignKey(nameof(InvoiceId))]
-    public SalesInvoice Invoice { get; set; } = null!;
+    [ForeignKey(nameof(SalesInvoiceId))]
+    public SalesInvoice SalesInvoice { get; set; } = null!;
 
     [Required]
     public int PartId { get; set; }
@@ -23,8 +23,10 @@ public class SalesItem
     [Required]
     [Range(1, int.MaxValue)]
     public int Quantity { get; set; }
-
-    [Required]
+    
     [Column(TypeName = "decimal(18,2)")]
-    public decimal Price { get; set; }
+    public decimal UnitPrice { get; set; }
+    
+    [NotMapped]
+    public decimal LineTotal => UnitPrice * Quantity;
 }
