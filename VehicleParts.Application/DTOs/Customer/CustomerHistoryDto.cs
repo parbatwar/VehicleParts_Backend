@@ -8,6 +8,8 @@ namespace VehicleParts.Application.DTOs.Customer
     {
         public List<AppointmentHistoryDto> ServiceHistory { get; set; } = new();
         public List<PurchaseHistoryDto> PurchaseHistory { get; set; } = new();
+
+        public List<PartRequestHistoryDto> PartRequestHistory { get; set; } = new();
     }
 
     public class AppointmentHistoryDto
@@ -17,5 +19,14 @@ namespace VehicleParts.Application.DTOs.Customer
         public DateTime Date { get; set; }
         public string Notes { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
+    }
+
+    public class PartRequestHistoryDto
+    {
+        public int Id { get; set; }
+        public string PartName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
     }
 }

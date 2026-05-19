@@ -14,5 +14,8 @@ namespace VehicleParts.Application.Interfaces.IRepositories
         //feature 14: Customer histry and purchase history
         Task<IEnumerable<Appointment>> GetCustomerAppointmentsAsync(int customerId);
         Task<IEnumerable<SalesInvoice>> GetCustomerPurchasesAsync(int customerId);
+
+        Task<IEnumerable<PartRequest>> GetCustomerPartRequestsAsync(int customerId);
+        Task<bool> HasCompletedAppointmentAsync(int customerId);
     }
 }
