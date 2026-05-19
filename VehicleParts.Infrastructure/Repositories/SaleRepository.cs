@@ -59,4 +59,11 @@ public class SaleRepository : ISaleRepository
         await _context.SaveChangesAsync();
         return invoice;
     }
+
+    public async Task<SalesInvoice> UpdateAsync(SalesInvoice invoice)
+    {
+        _context.SalesInvoices.Update(invoice);
+        await _context.SaveChangesAsync();
+        return invoice;
+    }
 }

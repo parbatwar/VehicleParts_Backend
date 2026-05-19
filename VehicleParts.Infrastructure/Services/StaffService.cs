@@ -203,4 +203,11 @@ public class StaffService : IStaffService
 
         _logger.LogWarning("Staff ID {StaffId} and associated User account permanently deleted.", staffId);
     }
+
+    public async Task<StaffResponseDto?> GetByUserIdAsync(long userId)
+    {
+        var staff = await _staffRepository.GetByUserIdAsync(userId);
+        if (staff == null) return null;
+        return await MapToResponseAsync(staff);
+    }
 }

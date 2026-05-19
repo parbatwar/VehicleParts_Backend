@@ -8,4 +8,6 @@ public interface ISaleService
     Task<SaleResponseDto?> GetSaleByIdAsync(int saleId);
     Task<List<SaleResponseDto>> GetAllSalesAsync();
     Task<List<SaleResponseDto>> GetSalesByCustomerAsync(int customerId);
+    Task SendInvoiceEmailAsync(int saleId);
+    Task<SaleResponseDto> MarkAsPaidAsync(int saleId);
 }
