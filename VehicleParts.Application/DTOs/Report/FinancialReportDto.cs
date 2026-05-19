@@ -8,12 +8,11 @@ public class FinancialReportDto
     public decimal TotalRevenue { get; set; }
     public decimal TotalExpense { get; set; }
     public decimal NetProfit { get; set; }
-    public DateTime GeneratedAt { get; set; }
-    public List<ReportSaleItemDto> Sales { get; set; } = new();
-    public List<ReportPurchaseItemDto> Purchases { get; set; } = new();
+    public List<ReportSaleDto> Sales { get; set; } = new();
+    public List<ReportPurchaseDto> Purchases { get; set; } = new();
 }
 
-public class ReportSaleItemDto
+public class ReportSaleDto
 {
     public int InvoiceId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
@@ -21,7 +20,7 @@ public class ReportSaleItemDto
     public DateTime Date { get; set; }
 }
 
-public class ReportPurchaseItemDto
+public class ReportPurchaseDto
 {
     public int InvoiceId { get; set; }
     public string VendorName { get; set; } = string.Empty;

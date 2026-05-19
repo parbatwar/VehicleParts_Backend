@@ -79,7 +79,7 @@ public class SaleService : ISaleService
             {
                 PartId = part.Id,
                 Quantity = itemDto.Quantity,
-                Price = part.UnitPrice
+                UnitPrice = part.SellingPrice
             });
 
             // reduce stock
@@ -94,7 +94,7 @@ public class SaleService : ISaleService
                     part.Name, part.StockQty);
             }
 
-            subtotal += itemDto.Quantity * part.UnitPrice;
+            subtotal += itemDto.Quantity * part.SellingPrice;
         }
 
         // Feature 16 — 10% discount if subtotal > 5000
@@ -147,8 +147,8 @@ public class SaleService : ISaleService
         <tr>
             <td style='padding: 10px; border-bottom: 1px solid #eee;'>{i.Part?.Name}</td>
             <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: center;'>{i.Quantity}</td>
-            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>Rs. {i.Price.ToString("N2")}</td>
-            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>Rs. {(i.Quantity * i.Price)}</td>
+            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>Rs. {i.UnitPrice.ToString("N2")}</td>
+            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>Rs. {(i.Quantity * i.UnitPrice)}</td>
         </tr>
     "));
 
@@ -257,8 +257,8 @@ public class SaleService : ISaleService
             PartId = i.PartId,
             PartName = i.Part?.Name ?? string.Empty,
             Quantity = i.Quantity,
-            UnitPrice = i.Price,
-            LineTotal = i.Quantity * i.Price
+            UnitPrice = i.UnitPrice,
+            LineTotal = i.Quantity * i.UnitPrice
         }).ToList()
     };
 }

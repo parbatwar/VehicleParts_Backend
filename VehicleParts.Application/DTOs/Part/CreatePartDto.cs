@@ -20,6 +20,10 @@ public class CreatePartDto
     public decimal UnitPrice { get; set; }
 
     [Required]
+    [Range(0, double.MaxValue)]
+    public decimal SellingPrice { get; set; }
+
+    [Required]
     [Range(0, int.MaxValue)]
     public int StockQty { get; set; }
 }

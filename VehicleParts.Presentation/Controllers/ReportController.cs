@@ -9,40 +9,31 @@ namespace VehicleParts.Presentation.Controllers;
 [Authorize(Roles = "Admin")]
 public class ReportController : ControllerBase
 {
-    private readonly IFinancialReportService _reportService;
-    private readonly ILogger<ReportController> _logger;
+    private readonly IReportService _reportService;
 
-    public ReportController(
-        IFinancialReportService reportService,
-        ILogger<ReportController> logger)
+    public ReportController(IReportService reportService)
     {
         _reportService = reportService;
-        _logger = logger;
     }
 
     [HttpGet("daily")]
     public async Task<IActionResult> GetDailyReport([FromQuery] DateTime date)
     {
-        var report = await _reportService.GenerateDailyReportAsync(date);
+        var report = await _reportService.GetDailyReportAsync(date);
         return Ok(report);
     }
 
     [HttpGet("monthly")]
-    public async Task<IActionResult> GetMonthlyReport(
-        [FromQuery] int year,
-        [FromQuery] int month)
+    public async Task<IActionResult> GetMonthlyReport([FromQuery] int year, [FromQuery] int month)
     {
-        if (month < 1 || month > 12)
-            return BadRequest(new { message = "Month must be between 1 and 12." });
-
-        var report = await _reportService.GenerateMonthlyReportAsync(year, month);
+        var report = await _reportService.GetMonthlyReportAsync(year, month);
         return Ok(report);
     }
 
     [HttpGet("yearly")]
     public async Task<IActionResult> GetYearlyReport([FromQuery] int year)
     {
-        var report = await _reportService.GenerateYearlyReportAsync(year);
+        var report = await _reportService.GetYearlyReportAsync(year);
         return Ok(report);
     }
 }

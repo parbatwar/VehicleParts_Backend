@@ -9,9 +9,9 @@ public class SalesItem
     public int Id { get; set; }
 
     [Required]
-    public int InvoiceId { get; set; }
+    public int SalesInvoiceId { get; set; }
 
-    [ForeignKey(nameof(InvoiceId))]
+    [ForeignKey(nameof(SalesInvoiceId))]
     public SalesInvoice Invoice { get; set; } = null!;
 
     [Required]
@@ -26,5 +26,5 @@ public class SalesItem
 
     [Required]
     [Column(TypeName = "decimal(18,2)")]
-    public decimal Price { get; set; }
+    public decimal UnitPrice { get; set; }
 }

@@ -13,6 +13,9 @@ public class UpdatePartDto
     [Range(0, double.MaxValue)]
     public decimal UnitPrice { get; set; }
 
+    [Range(0, double.MaxValue)]
+    public decimal SellingPrice { get; set; }
+
     [Range(0, int.MaxValue)]
     public int StockQty { get; set; }
 

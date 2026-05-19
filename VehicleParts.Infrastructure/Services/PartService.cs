@@ -79,6 +79,7 @@ public class PartService : IPartService
         part.Name = dto.Name;
         part.Category = dto.Category;
         part.UnitPrice = dto.UnitPrice;
+        part.SellingPrice = dto.SellingPrice;
         part.StockQty = dto.StockQty;
         part.UpdatedAt = DateTime.UtcNow;
 
@@ -105,6 +106,7 @@ public class PartService : IPartService
         Name = part.Name,
         Category = part.Category,
         UnitPrice = part.UnitPrice,
+        SellingPrice = part.SellingPrice,
         StockQty = part.StockQty,
         VendorName = part.Vendor?.Name ?? string.Empty,
         UpdatedAt = part.UpdatedAt

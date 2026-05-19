@@ -68,6 +68,11 @@ public class PurchaseInvoiceService : IPurchaseInvoiceService
 
                 part.StockQty += itemDto.Quantity;
                 part.UnitPrice = itemDto.UnitPrice;
+                if (itemDto.SellingPrice > 0)
+                {
+                    part.SellingPrice = itemDto.SellingPrice;
+                }
+
                 part.UpdatedAt = DateTime.UtcNow;
                 await _partRepository.UpdateAsync(part);
             }
@@ -80,6 +85,7 @@ public class PurchaseInvoiceService : IPurchaseInvoiceService
                     Name = itemDto.PartName!,
                     Category = itemDto.Category!,
                     UnitPrice = itemDto.UnitPrice,
+                    SellingPrice = itemDto.SellingPrice,
                     StockQty = itemDto.Quantity,
                     ReorderLevel = 10,
                     UpdatedAt = DateTime.UtcNow
