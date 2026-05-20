@@ -43,6 +43,13 @@ public class CustomerRepository : ICustomerRepository
             .ToListAsync();
     }
 
+    public async Task<Customer> UpdateAsync(Customer customer)
+    {
+        _context.Customers.Update(customer);
+        await _context.SaveChangesAsync();
+        return customer;
+    }
+
     public async Task<Customer?> GetByUserIdAsync(long userId)
     {
         return await _context.Customers
@@ -57,6 +64,10 @@ public class CustomerRepository : ICustomerRepository
             .Include(c => c.User)
             .Include(c => c.Vehicles)
             .Include(c => c.SalesInvoices)
+                .ThenInclude(s => s.Items)
+                    .ThenInclude(i => i.Part)
+            .Include(c => c.Appointments)
+            .Include(c => c.PartRequests)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
 }

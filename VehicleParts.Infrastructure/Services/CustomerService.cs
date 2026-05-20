@@ -45,22 +45,27 @@ public class CustomerService : ICustomerService
 
         await _userManager.AddToRoleAsync(user, "Customer");
 
+
+        var customer = new Customer
+        {
+            UserId = user.Id,
+            RegType = RegType.StaffRegistered,
+            Vehicles = new List<Vehicle>()
+        };
+
+        await _customerRepository.CreateAsync(customer);
+
         var vehicle = new Vehicle
         {
+            CustomerId = customer.Id,
             Brand = dto.Brand,
             Model = dto.Model,
             Year = dto.Year,
             PlateNumber = dto.PlateNumber
         };
 
-        var customer = new Customer
-        {
-            UserId = user.Id,
-            RegType = RegType.StaffRegistered,
-            Vehicles = new List<Vehicle> { vehicle }
-        };
-
-        await _customerRepository.CreateAsync(customer);
+        customer.Vehicles.Add(vehicle);
+        await _customerRepository.UpdateAsync(customer);
 
         return new CustomerResponseDto
         {
@@ -175,7 +180,13 @@ public class CustomerService : ICustomerService
                 Id = s.Id,
                 TotalAmount = s.TotalAmount,
                 PaymentStatus = s.PaymentStatus.ToString(),
-                Date = s.Date
+                Date = s.Date,
+                Items = s.Items.Select(i => new PurchaseItemDto // ← add this
+                {
+                    PartName = i.Part?.Name ?? string.Empty,
+                    Quantity = i.Quantity,
+                    Price = i.Part?.SellingPrice ?? 0
+                }).ToList()
             }).ToList()
         };
     }

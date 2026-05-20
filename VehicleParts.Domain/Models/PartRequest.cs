@@ -6,7 +6,8 @@ namespace VehicleParts.Domain.Models;
 public enum PartRequestStatus
 {
     Open,
-    Fulfilled
+    Fulfilled,
+    Rejected
 }
 
 public class PartRequest

@@ -14,4 +14,5 @@ public interface ICustomerRepository
     Task<Customer?> GetByUserIdAsync(long userId);
     Task<Customer?> GetByIdWithHistoryAsync(int id);
     Task DeleteAsync(Customer customer);
+    Task<Customer> UpdateAsync(Customer customer);
 }

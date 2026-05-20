@@ -18,4 +18,12 @@ public class PurchaseHistoryDto
     public decimal TotalAmount { get; set; }
     public string PaymentStatus { get; set; } = string.Empty;
     public DateTime Date { get; set; }
+    public List<PurchaseItemDto> Items { get; set; } = new();
+}
+
+public class PurchaseItemDto
+{
+    public string PartName { get; set; } = string.Empty;
+    public int Quantity { get; set; }
+    public decimal Price { get; set; }
 }
