@@ -61,6 +61,7 @@ public class CustomerRepository : ICustomerRepository
     public async Task<Customer?> GetByIdWithHistoryAsync(int id)
     {
         return await _context.Customers
+            .AsSplitQuery()
             .Include(c => c.User)
             .Include(c => c.Vehicles)
             .Include(c => c.SalesInvoices)
