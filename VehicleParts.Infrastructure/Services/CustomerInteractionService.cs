@@ -66,23 +66,40 @@ namespace VehicleParts.Infrastructure.Services
         {
             var customer = await GetCustomerByUserIdAsync(userId);
 
-            // Validation to ensure customer has a completed service
-            var hasCompletedService = await _repository.HasCompletedAppointmentAsync(customer.Id);
-            if (!hasCompletedService)
-            {
-                throw new InvalidOperationException("You can only submit a review after completing at least one service appointment.");
-            }
+            // Validate AppointmentId
+            if (dto.AppointmentId <= 0)
+                throw new ArgumentException("Appointment ID is required");
+
+            // Check if appointment exists and belongs to this customer
+            var appointment = await _repository.GetAppointmentByIdAsync(dto.AppointmentId);
+            if (appointment == null)
+                throw new KeyNotFoundException("Appointment not found");
+
+            if (appointment.CustomerId != customer.Id)
+                throw new UnauthorizedAccessException("You can only review your own appointments");
+
+            // Check if appointment is completed (status 2 = Done)
+            if (appointment.Status != AppointmentStatus.Done)
+                throw new InvalidOperationException("You can only review completed appointments");
+
+            // Check if review already exists for this appointment
+            var existingReview = await _repository.GetReviewByAppointmentAndCustomerAsync(dto.AppointmentId, customer.Id);
+            if (existingReview != null)
+                throw new InvalidOperationException("You have already submitted a review for this appointment");
 
             var review = new Review
             {
                 CustomerId = customer.Id,
+                AppointmentId = dto.AppointmentId,
                 Rating = dto.Rating,
                 Comment = dto.Comment,
                 CreatedAt = DateTime.UtcNow
             };
 
+
             return await _repository.CreateReviewAsync(review);
         }
+
 
         public async Task<CustomerHistoryDto> GetCustomerHistoryAsync(long userId)
         {
@@ -90,8 +107,6 @@ namespace VehicleParts.Infrastructure.Services
 
             var appointments = await _repository.GetCustomerAppointmentsAsync(customer.Id);
             var purchases = await _repository.GetCustomerPurchasesAsync(customer.Id);
-
-            // Fetch part requests from repository
             var partRequests = await _repository.GetCustomerPartRequestsAsync(customer.Id);
 
             return new CustomerHistoryDto
@@ -102,7 +117,8 @@ namespace VehicleParts.Infrastructure.Services
                     VehicleId = a.VehicleId,
                     Date = a.Date,
                     Notes = a.Notes ?? string.Empty,
-                    Status = a.Status.ToString()
+                    Status = a.Status.ToString(),
+                    HasReview = a.Reviews != null && a.Reviews.Any()
                 }).ToList(),
 
                 PurchaseHistory = purchases.Select(p => new PurchaseHistoryDto

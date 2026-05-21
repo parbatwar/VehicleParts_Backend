@@ -48,8 +48,8 @@ public class EmailService : IEmailService
                 SecureSocketOptions.StartTls);
 
             await client.AuthenticateAsync(
-                //_emailSettings.SenderEmail,
-                _emailSettings.Username,
+                _emailSettings.SenderEmail,
+                //_emailSettings.Username,
                 _emailSettings.Password);
 
             await client.SendAsync(message);

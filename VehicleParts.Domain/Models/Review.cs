@@ -15,6 +15,12 @@ public class Review
     public Customer Customer { get; set; } = null!;
 
     [Required]
+    public int AppointmentId { get; set; }
+
+    [ForeignKey(nameof(AppointmentId))]
+    public Appointment Appointment { get; set; } = null!;
+
+    [Required]
     [Range(1, 5)]
     public int Rating { get; set; }
 

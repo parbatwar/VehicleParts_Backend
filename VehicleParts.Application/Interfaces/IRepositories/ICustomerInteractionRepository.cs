@@ -11,11 +11,14 @@ namespace VehicleParts.Application.Interfaces.IRepositories
         Task<PartRequest> CreatePartRequestAsync(PartRequest request);
         Task<Review> CreateReviewAsync(Review review);
 
-        //feature 14: Customer histry and purchase history
+        //feature 14: Customer history and purchase history
         Task<IEnumerable<Appointment>> GetCustomerAppointmentsAsync(int customerId);
         Task<IEnumerable<SalesInvoice>> GetCustomerPurchasesAsync(int customerId);
 
         Task<IEnumerable<PartRequest>> GetCustomerPartRequestsAsync(int customerId);
         Task<bool> HasCompletedAppointmentAsync(int customerId);
+
+        Task<Appointment?> GetAppointmentByIdAsync(int appointmentId);
+        Task<Review?> GetReviewByAppointmentAndCustomerAsync(int appointmentId, int customerId);
     }
 }

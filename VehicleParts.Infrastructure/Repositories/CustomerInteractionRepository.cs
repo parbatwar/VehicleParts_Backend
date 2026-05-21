@@ -39,6 +39,19 @@ namespace VehicleParts.Infrastructure.Repositories
             return review;
         }
 
+        public async Task<Appointment?> GetAppointmentByIdAsync(int appointmentId)
+        {
+            return await _context.Appointments
+                .Include(a => a.Vehicle)
+                .FirstOrDefaultAsync(a => a.Id == appointmentId);
+        }
+
+        public async Task<Review?> GetReviewByAppointmentAndCustomerAsync(int appointmentId, int customerId)
+        {
+            return await _context.Reviews
+                .FirstOrDefaultAsync(r => r.AppointmentId == appointmentId && r.CustomerId == customerId);
+        }
+
         //feature 14
         public async Task<IEnumerable<Appointment>> GetCustomerAppointmentsAsync(int customerId)
         {
